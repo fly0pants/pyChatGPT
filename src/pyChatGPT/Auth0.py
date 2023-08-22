@@ -29,9 +29,9 @@ openai_captcha_sitekey = (
 
 
 def login(self) -> None:
-    '''
+    """
     Login to ChatGPT
-    '''
+    """
     if self._ChatGPT__auth_type == 'google':
         __google_login(self)
     elif self._ChatGPT__auth_type == 'microsoft':
@@ -41,9 +41,9 @@ def login(self) -> None:
 
 
 def __google_login(self) -> None:
-    '''
+    """
     Login to ChatGPT using Google
-    '''
+    """
     self.logger.debug('Clicking Google button...')
     self.driver.find_element(*google_oauth_btn).click()
 
@@ -121,10 +121,10 @@ def __microsoft_login(self) -> None:
 
 
 def __have_recaptcha_value(self) -> bool:
-    '''
+    """
     Check if the recaptcha input has a value
     :return: Boolean indicating if the recaptcha input has a value
-    '''
+    """
     try:
         recaptcha_result = self.driver.find_element(*openai_captcha_input)
         return recaptcha_result.get_attribute('value') != ''
@@ -133,15 +133,16 @@ def __have_recaptcha_value(self) -> bool:
 
 
 def __pypasser_solve(self, retry: int) -> None:
-    '''
+    """
     Solve the recaptcha using PyPasser
     :param retry: Number of times to retry solving the recaptcha
-    '''
+    """
     try:
         from pypasser import reCaptchaV2
     except ModuleNotFoundError:
         raise ModuleNotFoundError(
-            'Please install ffmpeg_downloader, PyPasser, and pocketsphinx by running `pip install ffmpeg_downloader PyPasser pocketsphinx`'
+            'Please install ffmpeg_downloader, PyPasser, and pocketsphinx '
+            'by running `pip install ffmpeg_downloader PyPasser pocketsphinx`'
         )
 
     self.logger.debug(f'Trying pypasser solver, max retry = {retry}')
@@ -152,10 +153,10 @@ def __pypasser_solve(self, retry: int) -> None:
 
 
 def __twocaptcha_solve(self, retry: int) -> None:
-    '''
+    """
     Solve the recaptcha using 2captcha
     :param retry: Number of times to retry solving the recaptcha
-    '''
+    """
     try:
         from twocaptcha import TwoCaptcha
     except ModuleNotFoundError:
@@ -165,14 +166,13 @@ def __twocaptcha_solve(self, retry: int) -> None:
 
     self.logger.debug(f'Trying 2captcha solver, max retry = {retry}')
     solver = TwoCaptcha(self._ChatGPT__solver_apikey, pollingInterval=5)
-    sitekey = self.driver.find_element(*openai_captcha_sitekey).get_attribute(
+    site_key = self.driver.find_element(*openai_captcha_sitekey).get_attribute(
         'data-recaptcha-sitekey'
     )
-    result = None
     for _ in range(retry):
         try:
             result = solver.recaptcha(
-                sitekey=sitekey,
+                sitekey=site_key,
                 url=self.driver.current_url,
                 invisible=1,
                 enterprise=1,
@@ -190,10 +190,10 @@ def __twocaptcha_solve(self, retry: int) -> None:
 
 
 def __openai_login(self, retry: int = 3) -> None:
-    '''
+    """
     Login to ChatGPT using OpenAI
     :param retry: Number of times to retry solving the recaptcha
-    '''
+    """
     self.logger.debug('Entering email...')
     self.driver.find_element(*openai_email_input).send_keys(self._ChatGPT__email)
     self.driver.find_element(*openai_continue_btn).click()
