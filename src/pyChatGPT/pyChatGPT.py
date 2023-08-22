@@ -15,7 +15,6 @@ import time
 import re
 import os
 
-
 cf_challenge_form = (By.ID, 'challenge-form')
 
 chatgpt_textbox = (By.TAG_NAME, 'textarea')
@@ -48,19 +47,19 @@ class ChatGPT:
     '''
 
     def __init__(
-        self,
-        session_token: str = None,
-        conversation_id: str = '',
-        auth_type: str = None,
-        email: str = None,
-        password: str = None,
-        login_cookies_path: str = '',
-        captcha_solver: str = 'pypasser',
-        solver_apikey: str = '',
-        proxy: str = None,
-        chrome_args: list = [],
-        moderation: bool = True,
-        verbose: bool = False,
+            self,
+            session_token: str = None,
+            conversation_id: str = '',
+            auth_type: str = None,
+            email: str = None,
+            password: str = None,
+            login_cookies_path: str = '',
+            captcha_solver: str = 'pypasser',
+            solver_apikey: str = '',
+            proxy: str = None,
+            chrome_args: list = [],
+            moderation: bool = True,
+            verbose: bool = False,
     ):
         '''
         Initialize the ChatGPT object\n
@@ -92,7 +91,7 @@ class ChatGPT:
         self.__moderation = moderation
 
         if not self.__session_token and (
-            not self.__email or not self.__password or not self.__auth_type
+                not self.__email or not self.__password or not self.__auth_type
         ):
             raise ValueError(
                 'Please provide either a session token or login credentials'
@@ -104,7 +103,7 @@ class ChatGPT:
         if self.__captcha_solver == '2captcha' and not self.__solver_apikey:
             raise ValueError('Please provide a 2captcha apikey')
         if self.__proxy and not re.findall(
-            r'(https?|socks(4|5)?):\/\/.+:\d{1,5}', self.__proxy
+                r'(https?|socks(4|5)?):\/\/.+:\d{1,5}', self.__proxy
         ):
             raise ValueError('Invalid proxy format')
         if self.__auth_type == 'openai' and self.__captcha_solver == 'pypasser':
@@ -261,7 +260,7 @@ class ChatGPT:
             response = self.driver.find_element(By.TAG_NAME, 'pre').text
         response = json.loads(response)
         if (not response) or (
-            'error' in response and response['error'] == 'RefreshAccessTokenError'
+                'error' in response and response['error'] == 'RefreshAccessTokenError'
         ):
             self.logger.debug('Authorization is invalid')
             if not self.__auth_type:
@@ -349,8 +348,8 @@ class ChatGPT:
         while self.__is_active:
             self.logger.debug('Updating session...')
             payload = (
-                '{"event":"session","data":{"trigger":"getSession"},"timestamp":%d}'
-                % int(time.time())
+                    '{"event":"session","data":{"trigger":"getSession"},"timestamp":%d}'
+                    % int(time.time())
             )
             try:
                 self.driver.execute_script(
@@ -393,7 +392,7 @@ class ChatGPT:
             response = self.driver.find_elements(*chatgpt_small_response)[-1]
             content = response.text
             if content != prev_content:
-                yield content[len(prev_content) :]
+                yield content[len(prev_content):]
                 prev_content = content
             if not result_streaming:
                 break
